@@ -128,9 +128,4 @@ public class MainActivity extends ActionBarActivity {
             Log.i("Setup Drawer", e.getMessage());
         }
     }
-
-    private void testMethod(){
-        Log.i("test", "test");
-    }
-
 }
