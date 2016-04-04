@@ -29,6 +29,7 @@ import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity {
 
+
     Toolbar toolbar;
     EditText productSearch;
     StoreCheckDetailAdapter adapter;
@@ -126,6 +127,10 @@ public class MainActivity extends ActionBarActivity {
         catch (Exception e){
             Log.i("Setup Drawer", e.getMessage());
         }
+    }
+
+    private void testMethod(){
+        Log.i("test", "test");
     }
 
 }
