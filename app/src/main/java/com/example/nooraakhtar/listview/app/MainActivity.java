@@ -34,7 +34,8 @@ public class MainActivity extends ActionBarActivity {
     private SearchView.OnQueryTextListener queryTextListener;
     StoreCheckNavigationFragment navigationFragment;
     DrawerLayout drawerLayout;
-    StoreCheckDetailsFragment storeCheckFragment;
+    Fragment fragment;
+    int activeView;
 
     final static int VIEW_DETAILS = 0;
     final static int ADD_BRAND = 1;
@@ -79,7 +80,23 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if (newText != null) {
-                        storeCheckFragment.adapter.filterByProduct(newText);
+                        switch (activeView){
+                            case VIEW_DETAILS:
+                                ((StoreCheckDetailsFragment)fragment).adapter.filterByProduct(newText);
+                                break;
+                            case ADD_BRAND:
+
+                                break;
+                            case ADD_OUTLET:
+
+                                break;
+                            case IMPORT_STORECHECK_DETAILS:
+
+                                break;
+                            case EXPORT_STORECHECK_DETAILS:
+
+                                break;
+                        }
                     }
                     return true;
                 }
@@ -117,8 +134,6 @@ public class MainActivity extends ActionBarActivity {
         toolbar.inflateMenu(R.menu.storecheck_menu);
     }
 
-
-
     private void setUpNavigationView() {
         try {
             navigationFragment = (StoreCheckNavigationFragment) getSupportFragmentManager().findFragmentById(R.id.storeCheckNavDrawerFragment);
@@ -136,17 +151,16 @@ public class MainActivity extends ActionBarActivity {
 
                 }
             }
-
             ));
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.i("Setup Drawer", e.getMessage());
         }
     }
 
     private void loadView(int position){
-        Fragment fragment = null;
+        activeView = position;
+        fragment = null;
         switch (position){
             case VIEW_DETAILS:
                 fragment = new StoreCheckDetailsFragment();
@@ -172,4 +186,5 @@ public class MainActivity extends ActionBarActivity {
             navigationFragment.closeDrawer();
         }
     }
+
 }
