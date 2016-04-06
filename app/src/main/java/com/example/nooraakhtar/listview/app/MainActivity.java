@@ -38,10 +38,11 @@ public class MainActivity extends ActionBarActivity {
     int activeView;
 
     final static int VIEW_DETAILS = 0;
-    final static int ADD_BRAND = 1;
-    final static int ADD_OUTLET = 2;
-    final static int IMPORT_STORECHECK_DETAILS = 3;
-    final static int EXPORT_STORECHECK_DETAILS = 4;
+    final static int VIEW_PRODUCT_DETAILS = 1;
+    final static int ADD_BRAND = 2;
+    final static int ADD_OUTLET = 3;
+    final static int IMPORT_STORECHECK_DETAILS = 4;
+    final static int EXPORT_STORECHECK_DETAILS = 5;
 
     boolean isLaunch = true;
 
@@ -83,6 +84,9 @@ public class MainActivity extends ActionBarActivity {
                         switch (activeView){
                             case VIEW_DETAILS:
                                 ((StoreCheckDetailsFragment)fragment).adapter.filterByProduct(newText);
+                                break;
+                            case VIEW_PRODUCT_DETAILS:
+
                                 break;
                             case ADD_BRAND:
 
@@ -165,6 +169,8 @@ public class MainActivity extends ActionBarActivity {
             case VIEW_DETAILS:
                 fragment = new StoreCheckDetailsFragment();
                 break;
+            case VIEW_PRODUCT_DETAILS:
+                fragment = new StoreCheckAddProductDetailsFragment();
             case ADD_BRAND:
                 fragment = new StoreCheckAddBrandFragment();
                 break;

@@ -17,5 +17,6 @@
     <string name="drawer_close">Close</string>
     <string name="browse_file">Browse file</string>
     <string name="export">Export Store Check Data</string>
+    <string name="product_details">View/Edit Product Details </string>
 </resources>
 
