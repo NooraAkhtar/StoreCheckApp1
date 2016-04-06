@@ -41,12 +41,6 @@ public class StoreCheckNavigationAdapter extends RecyclerView.Adapter<StoreCheck
         StoreCheckNavigationDrawerItem current = drawerItems.get(position);
 
         holder.title.setText(current.getTitle());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, holder.title.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override

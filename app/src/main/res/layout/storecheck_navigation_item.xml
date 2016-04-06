@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true">
     <!--<ImageView
         android:id="@+id/imgIcon"
         android:layout_width="20dp"
@@ -14,9 +17,11 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/drawer_Item"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="@color/grey_700"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:text="Test Menu Item"
+        android:paddingTop="@dimen/drawer_item_paddingtop"/>
 </LinearLayout>

@@ -15,5 +15,7 @@
     <string name="search_hint">Product Search</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="browse_file">Browse file</string>
+    <string name="export">Export Store Check Data</string>
 </resources>
 

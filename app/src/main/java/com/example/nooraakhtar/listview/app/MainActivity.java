@@ -1,39 +1,46 @@
 package com.example.nooraakhtar.listview.app;
 
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
-import android.support.v7.widget.SearchView;
 
 import com.example.nooraakhtar.listview.R;
 import com.example.nooraakhtar.listview.adapter.StoreCheckDetailAdapter;
-import com.example.nooraakhtar.listview.adapter.StoreCheckNavigationAdapter;
 import com.example.nooraakhtar.listview.model.StoreCheckDetail;
-
-import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
 
-
     Toolbar toolbar;
-    EditText productSearch;
-    StoreCheckDetailAdapter adapter;
     private SearchView.OnQueryTextListener queryTextListener;
+    StoreCheckNavigationFragment navigationFragment;
+    DrawerLayout drawerLayout;
+    StoreCheckDetailsFragment storeCheckFragment;
+
+    final static int VIEW_DETAILS = 0;
+    final static int ADD_BRAND = 1;
+    final static int ADD_OUTLET = 2;
+    final static int IMPORT_STORECHECK_DETAILS = 3;
+    final static int EXPORT_STORECHECK_DETAILS = 4;
+
+    boolean isLaunch = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +50,15 @@ public class MainActivity extends ActionBarActivity {
 
             setupToolbar();
             setUpNavigationView();
-            setUpStoreCheckDetailsView();
-        }
-        catch (Exception e) {
-        Log.i("Main Activity Exception", e.getMessage());
+
+            if(isLaunch)
+            {
+                isLaunch = false;
+                loadView(VIEW_DETAILS);
+            }
+
+        } catch (Exception e) {
+            Log.i("Main Activity Exception", e.getMessage());
         }
     }
 
@@ -64,14 +76,14 @@ public class MainActivity extends ActionBarActivity {
             queryTextListener = new SearchView.OnQueryTextListener(){
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Log.i("onQueryTextChange", newText);
-                    adapter.filterByProduct(newText);
+                    if (newText != null) {
+                        storeCheckFragment.adapter.filterByProduct(newText);
+                    }
                     return true;
                 }
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    Log.i("onQueryTextSubmit", query);
-
                     return true;
                 }
             };
@@ -101,31 +113,108 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar.setTitle("Store-check details");
         toolbar.inflateMenu(R.menu.storecheck_menu);
-
-        //test
     }
 
 
-    private void setUpStoreCheckDetailsView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.storecheckitemsView);
-        adapter = new StoreCheckDetailAdapter(this, StoreCheckDetail.getData());
 
-        recyclerView.setAdapter(adapter);
-
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(manager);
-
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-    }
     private void setUpNavigationView() {
         try {
-            StoreCheckNavigationFragment drawerFragment = (StoreCheckNavigationFragment) getSupportFragmentManager().findFragmentById(R.id.storeCheckNavDrawerFragment);
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawerFragment.setUpDrawer(R.id.storeCheckNavDrawerFragment, drawerLayout, toolbar);
+            navigationFragment = (StoreCheckNavigationFragment) getSupportFragmentManager().findFragmentById(R.id.storeCheckNavDrawerFragment);
+            drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+            navigationFragment.setUpDrawer(R.id.storeCheckNavDrawerFragment, drawerLayout, toolbar);
+
+            navigationFragment.recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), navigationFragment.recyclerView, new ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    loadView(position);
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+
+                }
+            }
+
+            ));
+
         }
         catch (Exception e){
             Log.i("Setup Drawer", e.getMessage());
+        }
+    }
+
+    private void loadView(int position){
+        Fragment fragment = null;
+        switch (position){
+            case VIEW_DETAILS:
+                fragment = new StoreCheckDetailsFragment();
+                break;
+            case ADD_BRAND:
+                fragment = new StoreCheckAddBrandFragment();
+                break;
+            case ADD_OUTLET:
+                fragment = new StoreCheckAddOutletFragment();
+                break;
+            case IMPORT_STORECHECK_DETAILS:
+                fragment = new StoreCheckImportFragment();
+                break;
+            case EXPORT_STORECHECK_DETAILS:
+                fragment = new StoreCheckExportFragment();
+                break;
+        }
+
+        if(fragment!=null){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.containerFrame, fragment).commit();
+            navigationFragment.closeDrawer();
+        }
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+        void onLongClick(View view, int position);
+    }
+
+    public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+        private GestureDetector gestureDetector;
+        private MainActivity.ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final MainActivity.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
         }
     }
 }

@@ -21,7 +21,8 @@ import com.example.nooraakhtar.listview.model.StoreCheckNavigationDrawerItem;
  */
 public class StoreCheckNavigationFragment extends Fragment {
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
+    public RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class StoreCheckNavigationFragment extends Fragment {
     }
 
     private void setUpRecyclerView(View view) {
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.storeCheckDrawerList);
+            recyclerView = (RecyclerView) view.findViewById(R.id.storeCheckDrawerList);
 
             StoreCheckNavigationAdapter adapter = new StoreCheckNavigationAdapter(getActivity(), StoreCheckNavigationDrawerItem.getData());
             recyclerView.setAdapter(adapter);
@@ -77,4 +78,17 @@ public class StoreCheckNavigationFragment extends Fragment {
             Log.i("setup drawer exception", e.getMessage());
         }
     }
+
+    public void closeDrawer(){
+        try{
+            Log.i("Draw", "Close Called");
+
+
+        mDrawerLayout.closeDrawers();
+    }
+    catch (Exception e){
+        Log.i("Exception", e.getMessage());
+    }
+    }
+
 }
